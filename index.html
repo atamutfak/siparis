@@ -8,6 +8,15 @@
     :root {
       --p-color: #d35400;
       --bg-color: #f8f9fa;
+      --text-color: #2c3e50;
+      --border-color: #e5e7eb;
+      --error-bg: #fff3f3;
+      --error-text: #b00020;
+      --success-color: #25d366;
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     body {
@@ -15,22 +24,88 @@
       background-color: var(--bg-color);
       margin: 0;
       padding: 15px;
+      color: var(--text-color);
     }
 
     .container {
-      max-width: 600px;
-      background: white;
-      padding: 25px;
+      max-width: 640px;
+      background: #ffffff;
+      padding: 24px;
       border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      margin: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      margin: 20px auto;
     }
 
     .header {
       text-align: center;
-      border-bottom: 2px solid #eee;
-      margin-bottom: 25px;
-      padding-bottom: 10px;
+      border-bottom: 2px solid #f1f1f1;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+    }
+
+    .header h2 {
+      margin: 0;
+      color: var(--p-color);
+      font-size: 28px;
+    }
+
+    .header p {
+      margin: 8px 0 0;
+      color: #666;
+      font-size: 15px;
+    }
+
+    #loading {
+      text-align: center;
+      padding: 20px;
+      color: var(--p-color);
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    #errorBox {
+      display: none;
+      margin: 16px 0;
+      padding: 14px;
+      border-radius: 12px;
+      background: var(--error-bg);
+      color: var(--error-text);
+      border: 1px solid #f3b7bf;
+      font-size: 14px;
+      line-height: 1.4;
+      white-space: pre-line;
+    }
+
+    form {
+      display: none;
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      color: #555;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #dcdcdc;
+      border-radius: 10px;
+      font-size: 15px;
+      background: #fff;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
     }
 
     .person-card {
@@ -47,94 +122,88 @@
       top: -12px;
       left: 15px;
       background: var(--p-color);
-      color: white;
-      padding: 3px 12px;
+      color: #fff;
+      padding: 4px 12px;
       border-radius: 6px;
       font-size: 13px;
-      font-weight: bold;
-    }
-
-    .input-group {
-      margin-bottom: 15px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: bold;
-      font-size: 14px;
-      color: #555;
-    }
-
-    input, textarea, select {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      box-sizing: border-box;
-      font-size: 15px;
+      font-weight: 700;
     }
 
     .menu-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 15px;
-    }
-
-    .btn {
-      width: 100%;
-      background: #25D366;
-      color: white;
-      border: none;
-      padding: 18px;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 20px;
+      gap: 14px;
     }
 
     .kvkk {
       font-size: 12px;
       color: #7f8c8d;
-      margin-top: 15px;
+      margin-top: 12px;
       display: flex;
       gap: 8px;
       align-items: flex-start;
     }
 
-    #loading {
-      text-align: center;
-      padding: 20px;
-      color: var(--p-color);
-      font-weight: 600;
+    .kvkk input {
+      width: auto;
+      margin-top: 2px;
     }
 
-    #errorBox {
-      display: none;
-      margin-top: 15px;
+    .btn {
+      width: 100%;
+      background: var(--success-color);
+      color: #fff;
+      border: none;
+      padding: 17px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .btn:hover {
+      opacity: 0.95;
+    }
+
+    .debug-box {
+      margin-top: 14px;
       padding: 12px;
       border-radius: 10px;
-      background: #fff3f3;
-      color: #b00020;
-      border: 1px solid #f1b0b7;
-      font-size: 14px;
+      background: #f7f7f7;
+      color: #555;
+      font-size: 12px;
+      display: none;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
 
-    #mainForm {
-      display: none;
+    @media (max-width: 600px) {
+      .container {
+        padding: 18px;
+        margin: 10px auto;
+      }
+
+      .menu-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .header h2 {
+        font-size: 24px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h2 style="margin:0; color:var(--p-color);">ATA MUTFAK</h2>
-      <p style="margin:5px 0;">Günlük Tabldot Sipariş</p>
+      <h2>ATA MUTFAK</h2>
+      <p>Günlük Tabldot Sipariş</p>
     </div>
 
     <div id="loading">Menü E-Tablo'dan yükleniyor...</div>
     <div id="errorBox"></div>
+    <div id="debugBox" class="debug-box"></div>
 
     <form id="mainForm">
       <div class="input-group">
@@ -143,8 +212,13 @@
       </div>
 
       <div class="input-group">
+        <label for="custPhone">Telefon *</label>
+        <input type="tel" id="custPhone" required placeholder="05xx xxx xx xx" />
+      </div>
+
+      <div class="input-group">
         <label for="custAddress">Teslimat Adresi *</label>
-        <textarea id="custAddress" rows="2" required placeholder="Adresiniz"></textarea>
+        <textarea id="custAddress" required placeholder="Adresiniz"></textarea>
       </div>
 
       <div class="input-group">
@@ -172,7 +246,10 @@
   <script>
     const SHEET_ID = '1Tym9AWjTN-2WT4POrdRb2TWYcSZq1kTB2rPcUy_NF_o';
     const SHEET_GID = '0';
-    const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${SHEET_GID}`;
+    const WHATSAPP_NUMBER = '905077476114';
+    const MENU_PRICE_PER_PERSON = 200;
+
+    const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`;
 
     const menuData = {
       corbalar: [],
@@ -183,15 +260,29 @@
 
     const loadingEl = document.getElementById('loading');
     const errorBoxEl = document.getElementById('errorBox');
+    const debugBoxEl = document.getElementById('debugBox');
     const mainFormEl = document.getElementById('mainForm');
     const personCountEl = document.getElementById('personCount');
     const dynamicPersonsEl = document.getElementById('dynamicPersons');
     const sendBtnEl = document.getElementById('sendBtn');
 
-    function showError(message) {
+    function showError(message, debugText = '') {
       loadingEl.style.display = 'none';
+      mainFormEl.style.display = 'none';
       errorBoxEl.style.display = 'block';
       errorBoxEl.textContent = message;
+
+      if (debugText) {
+        debugBoxEl.style.display = 'block';
+        debugBoxEl.textContent = debugText;
+      }
+    }
+
+    function showForm() {
+      loadingEl.style.display = 'none';
+      errorBoxEl.style.display = 'none';
+      debugBoxEl.style.display = 'none';
+      mainFormEl.style.display = 'block';
     }
 
     function parseCsvLine(line) {
@@ -211,19 +302,36 @@
             inQuotes = !inQuotes;
           }
         } else if (char === ',' && !inQuotes) {
-          result.push(current.trim());
+          result.push(current);
           current = '';
         } else {
           current += char;
         }
       }
 
-      result.push(current.trim());
+      result.push(current);
+
       return result.map(cell => cell.replace(/^"|"$/g, '').trim());
     }
 
+    function uniqueClean(arr) {
+      return [...new Set(arr.map(x => (x || '').trim()).filter(Boolean))];
+    }
+
     function createOptions(options) {
-      return options.map(item => `<option value="${item}">${item}</option>`).join('');
+      if (!options.length) {
+        return '<option value="">Seçenek bulunamadı</option>';
+      }
+      return options.map(item => `<option value="${escapeHtml(item)}">${escapeHtml(item)}</option>`).join('');
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
     }
 
     function generateForms() {
@@ -239,19 +347,19 @@
           <div class="menu-grid">
             <div class="input-group">
               <label>Çorba</label>
-              <select class="p-corba">${createOptions(menuData.corbalar)}</select>
+              <select class="p-corba" required>${createOptions(menuData.corbalar)}</select>
             </div>
             <div class="input-group">
               <label>Ana Yemek</label>
-              <select class="p-ana">${createOptions(menuData.anaYemekler)}</select>
+              <select class="p-ana" required>${createOptions(menuData.anaYemekler)}</select>
             </div>
             <div class="input-group">
               <label>Yan Lezzet</label>
-              <select class="p-yan">${createOptions(menuData.yanlar)}</select>
+              <select class="p-yan" required>${createOptions(menuData.yanlar)}</select>
             </div>
             <div class="input-group">
               <label>İçecek</label>
-              <select class="p-ek">${createOptions(menuData.icecekler)}</select>
+              <select class="p-ek" required>${createOptions(menuData.icecekler)}</select>
             </div>
           </div>
         `;
@@ -262,21 +370,30 @@
 
     async function getMenu() {
       try {
-        const response = await fetch(SHEET_URL);
+        const response = await fetch(SHEET_URL, { method: 'GET' });
 
         if (!response.ok) {
-          throw new Error(`HTTP hata kodu: ${response.status}`);
+          throw new Error(`HTTP ${response.status}`);
         }
 
-        const data = await response.text();
-        const rows = data.split(/\r?\n/).filter(row => row.trim() !== '');
+        const csvText = await response.text();
 
-        if (rows.length <= 1) {
-          showError('Tablo boş görünüyor veya veri satırı bulunamadı.');
-          return;
+        if (!csvText || !csvText.trim()) {
+          throw new Error('CSV boş döndü.');
         }
 
-        rows.slice(1).forEach(row => {
+        const rows = csvText
+          .split(/\r?\n/)
+          .map(r => r.trim())
+          .filter(Boolean);
+
+        if (rows.length < 2) {
+          throw new Error('Başlık dışında veri satırı bulunamadı.');
+        }
+
+        const dataRows = rows.slice(1);
+
+        dataRows.forEach(row => {
           const cols = parseCsvLine(row);
 
           if (cols[0]) menuData.corbalar.push(cols[0]);
@@ -285,22 +402,35 @@
           if (cols[3]) menuData.icecekler.push(cols[3]);
         });
 
+        menuData.corbalar = uniqueClean(menuData.corbalar);
+        menuData.anaYemekler = uniqueClean(menuData.anaYemekler);
+        menuData.yanlar = uniqueClean(menuData.yanlar);
+        menuData.icecekler = uniqueClean(menuData.icecekler);
+
         if (
-          menuData.corbalar.length === 0 &&
-          menuData.anaYemekler.length === 0 &&
-          menuData.yanlar.length === 0 &&
+          menuData.corbalar.length === 0 ||
+          menuData.anaYemekler.length === 0 ||
+          menuData.yanlar.length === 0 ||
           menuData.icecekler.length === 0
         ) {
-          showError("Tablo okundu ama menü alanlarında veri bulunamadı. Sütun sıralarını kontrol edin.");
-          return;
+          throw new Error(
+            'Menü sütunlarından biri boş görünüyor.\n' +
+            'Beklenen sıra:\n' +
+            '1. sütun = Çorba\n' +
+            '2. sütun = Ana Yemek\n' +
+            '3. sütun = Yan Lezzet\n' +
+            '4. sütun = İçecek'
+          );
         }
 
-        loadingEl.style.display = 'none';
-        mainFormEl.style.display = 'block';
+        showForm();
         generateForms();
       } catch (error) {
-        console.error('Sheet fetch error:', error);
-        showError('Tabloya erişilemedi. Lütfen tablo paylaşım ayarını, gid değerini ve sütun yapısını kontrol edin.');
+        showError(
+          'Tabloya erişilemedi veya veriler okunamadı. Lütfen tablo paylaşımını, gid değerini ve sütun düzenini kontrol edin.',
+          `Hata detayı: ${error.message}\n\nKullanılan URL:\n${SHEET_URL}`
+        );
+        console.error('Menu load error:', error);
       }
     }
 
@@ -310,13 +440,16 @@
       }
 
       const name = document.getElementById('custName').value.trim();
+      const phone = document.getElementById('custPhone').value.trim();
       const address = document.getElementById('custAddress').value.trim();
       const count = Number(personCountEl.value);
 
       let msg = `*YENİ SİPARİŞ (Ata Mutfak)*\n`;
       msg += `👤 *Müşteri:* ${name}\n`;
+      msg += `📞 *Telefon:* ${phone}\n`;
       msg += `📍 *Adres:* ${address}\n`;
-      msg += `👥 *Kişi:* ${count} | *Tutar:* ${count * 200} TL\n`;
+      msg += `👥 *Kişi Sayısı:* ${count}\n`;
+      msg += `💵 *Tutar:* ${count * MENU_PRICE_PER_PERSON} TL\n`;
       msg += `--------------------------\n`;
 
       const personCards = document.querySelectorAll('.person-card');
@@ -330,8 +463,7 @@
         msg += `*${index + 1}. Kişi:* ${corba}, ${ana}, ${yan}, ${ek}\n`;
       });
 
-      const phoneNumber = '905077476114';
-      const waUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(msg)}`;
+      const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
       window.location.href = waUrl;
     }
 
