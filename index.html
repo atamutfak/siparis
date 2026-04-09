@@ -3,106 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ata Mutfak Sipariş Formu</title>
+    <title>Ata Mutfak - Akıllı Sipariş</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; margin: 0; padding: 15px; color: #333; }
-        .container { max-width: 500px; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin: auto; }
-        h2 { color: #d35400; text-align: center; margin-bottom: 5px; }
-        .price { text-align: center; font-weight: bold; color: #7f8c8d; margin-bottom: 20px; }
-        .section-title { font-weight: bold; margin-top: 20px; color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 5px; display: block; }
-        
-        .input-group { margin-top: 15px; }
-        .input-group label { display: block; margin-bottom: 5px; font-size: 0.9em; font-weight: bold; }
-        .input-group input, .input-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        
-        .option { background: #fff; margin: 10px 0; padding: 12px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; border: 1px solid #eee; transition: 0.3s; }
-        .option:hover { background: #fffbf0; border-color: #f39c12; }
-        .option input { margin-right: 15px; accent-color: #f39c12; }
-        
-        .kvkk-area { margin-top: 20px; font-size: 0.8em; color: #7f8c8d; background: #fdfdfd; padding: 10px; border-radius: 5px; border: 1px inset #eee; }
-        .btn { width: 100%; background: #25D366; color: white; border: none; padding: 18px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); }
-        .footer-info { text-align: center; font-size: 0.8em; color: #bdc3c7; margin-top: 20px; }
+        :root { --p-color: #d35400; --s-color: #273c75; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f1f2f6; margin: 0; padding: 10px; }
+        .container { max-width: 600px; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin: auto; }
+        .header { text-align: center; border-bottom: 2px solid #eee; margin-bottom: 20px; padding-bottom: 10px; }
+        .person-card { background: #fdfdfd; border: 1px solid #eee; padding: 15px; border-radius: 12px; margin-bottom: 20px; position: relative; }
+        .person-number { position: absolute; top: -10px; left: 10px; background: var(--p-color); color: white; padding: 2px 10px; border-radius: 5px; font-size: 12px; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+        input[type="text"], textarea, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        select { background: white; font-size: 14px; }
+        .btn { width: 100%; background: #25D366; color: white; border: none; padding: 15px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        .kvkk { font-size: 11px; color: #7f8c8d; margin-top: 10px; display: flex; align-items: flex-start; gap: 5px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>ATA MUTFAK</h2>
-    <p class="price">Günlük Tabldot Menü: 200₺</p>
+    <div class="header">
+        <h2>ATA MUTFAK</h2>
+        <p>Hızlı Sipariş Sistemi</p>
+    </div>
 
-    <form id="orderForm">
+    <form id="mainForm">
         <div class="input-group">
             <label>Ad Soyad *</label>
-            <input type="text" name="ad" placeholder="Adınız ve Soyadınız" required>
+            <input type="text" id="custName" required placeholder="İsminiz">
         </div>
         <div class="input-group">
             <label>Teslimat Adresi *</label>
-            <textarea name="adres" rows="2" placeholder="Mahalle, Sokak, No, Kat/Daire" required></textarea>
+            <textarea id="custAddress" rows="2" required placeholder="Adresiniz"></textarea>
         </div>
         <div class="input-group">
-            <label>Kaç Kişilik Sipariş? *</label>
-            <input type="number" name="adet" value="1" min="1" required style="width: 80px;">
+            <label>Toplam Kaç Kişilik Menü? *</label>
+            <select id="personCount" onchange="generateForms()">
+                <option value="1">1 Kişilik</option>
+                <option value="2">2 Kişilik</option>
+                <option value="3">3 Kişilik</option>
+                <option value="4">4 Kişilik</option>
+                <option value="5">5 Kişilik</option>
+            </select>
         </div>
 
-        <span class="section-title">🥣 ÇORBALAR</span>
-        <label class="option"><input type="radio" name="corba" value="Domates Çorbası" required> Domates Çorbası</label>
-        <label class="option"><input type="radio" name="corba" value="Mercimek Çorbası"> Mercimek Çorbası</label>
+        <div id="dynamicPersons">
+            </div>
 
-        <span class="section-title">🍖 ANA YEMEKLER</span>
-        <label class="option"><input type="radio" name="ana" value="Püreli Tavuk" required> Püreli Tavuk</label>
-        <label class="option"><input type="radio" name="ana" value="Patlıcan Musakka"> Patlıcan Musakka</label>
-        <label class="option"><input type="radio" name="ana" value="Tavuk Fajita"> Tavuk Fajita</label>
-
-        <span class="section-title">🍚 YAN LEZZETLER</span>
-        <label class="option"><input type="radio" name="yan" value="Pirinç Pilavı" required> Pirinç Pilavı</label>
-        <label class="option"><input type="radio" name="yan" value="Bulgur Pilavı"> Bulgur Pilavı</label>
-
-        <span class="section-title">🥤 İÇECEK / EK</span>
-        <label class="option"><input type="radio" name="ek" value="Cacık" required> Cacık</label>
-        <label class="option"><input type="radio" name="ek" value="Salata"> Salata</label>
-        <label class="option"><input type="radio" name="ek" value="Ayran"> Ayran</label>
-
-        <div class="kvkk-area">
-            <label>
-                <input type="checkbox" required> 
-                Paylaştığım verilerin sipariş takibi amacıyla işlenmesini ve iletişim kurulmasını KVKK kapsamında kabul ediyorum.
-            </label>
+        <div class="kvkk">
+            <input type="checkbox" required>
+            <span>Verilerimin sipariş yönetimi için işlenmesini ve WhatsApp üzerinden iletişimi kabul ediyorum.</span>
         </div>
 
-        <button type="button" class="btn" onclick="sendWhatsApp()">SİPARİŞİ WHATSAPP'TAN GÖNDER</button>
+        <button type="button" class="btn" onclick="sendOrder()">SİPARİŞİ WHATSAPP'A AKTAR</button>
     </form>
-    <div class="footer-info">Ata Mutfak Esnaf Lokantası | 0 507 747 6114</div>
 </div>
 
 <script>
-    function sendWhatsApp() {
-        const form = document.getElementById('orderForm');
-        if(!form.checkValidity()) {
-            alert("Lütfen tüm zorunlu alanları doldurun ve KVKK onayını işaretleyin.");
-            return;
+    // --- BURAYI E-TABLOYA BAĞLAYACAĞIZ ---
+    const menuData = {
+        corbalar: ["Mercimek", "Domates"],
+        anaYemekler: ["Püreli Tavuk", "Musakka", "Fajita", "Nohut"],
+        yanlar: ["Pirinç Pilavı", "Bulgur Pilavı", "Erişte"],
+        icecekler: ["Ayran", "Cacık", "Salata", "Meyve Suyu"]
+    };
+
+    function generateForms() {
+        const count = $("#personCount").val();
+        const container = $("#dynamicPersons");
+        container.empty();
+
+        for (let i = 1; i <= count; i++) {
+            container.append(`
+                <div class="person-card" data-index="${i}">
+                    <span class="person-number">${i}. Kişi Seçimi</span>
+                    <div class="menu-grid">
+                        <div class="input-group">
+                            <label>Çorba</label>
+                            <select class="p-corba">${menuData.corbalar.map(x => `<option>${x}</option>`)}</select>
+                        </div>
+                        <div class="input-group">
+                            <label>Ana Yemek</label>
+                            <select class="p-ana">${menuData.anaYemekler.map(x => `<option>${x}</option>`)}</select>
+                        </div>
+                        <div class="input-group">
+                            <label>Yan Lezzet</label>
+                            <select class="p-yan">${menuData.yanlar.map(x => `<option>${x}</option>`)}</select>
+                        </div>
+                        <div class="input-group">
+                            <label>İçecek/Ek</label>
+                            <select class="p-ek">${menuData.icecekler.map(x => `<option>${x}</option>`)}</select>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+    }
+
+    function sendOrder() {
+        if(!document.getElementById('mainForm').checkValidity()) {
+            alert("Lütfen tüm alanları doldurun."); return;
         }
 
-        const formData = new FormData(form);
-        const adet = formData.get('adet');
-        const toplamTutar = adet * 200;
+        let orderSummary = `*YENİ SİPARİŞ (Ata Mutfak)*\n`;
+        orderSummary += `👤 *Müşteri:* ${$("#custName").val()}\n`;
+        orderSummary += `📍 *Adres:* ${$("#custAddress").val()}\n`;
+        orderSummary += `👥 *Kişi Sayısı:* ${$("#personCount").val()}\n`;
+        orderSummary += `--------------------------\n`;
 
-        let mesaj = `*YENİ SİPARİŞ (Ata Mutfak)*\n`;
-        mesaj += `--------------------------\n`;
-        mesaj += `👤 *Müşteri:* ${formData.get('ad')}\n`;
-        mesaj += `📍 *Adres:* ${formData.get('adres')}\n`;
-        mesaj += `🍱 *Adet:* ${adet} Kişilik\n`;
-        mesaj += `💰 *Toplam:* ${toplamTutar} TL\n`;
-        mesaj += `--------------------------\n`;
-        mesaj += `🥣 *Çorba:* ${formData.get('corba')}\n`;
-        mesaj += `🍖 *Ana Yemek:* ${formData.get('ana')}\n`;
-        mesaj += `🍚 *Yan Lezzet:* ${formData.get('yan')}\n`;
-        mesaj += `🥤 *Ek:* ${formData.get('ek')}\n`;
-        mesaj += `--------------------------\n`;
-        mesaj += `_KVKK Onaylanmıştır._`;
+        $(".person-card").each(function(i) {
+            orderSummary += `*${i+1}. Kişi:* ${$(this).find(".p-corba").val()}, ${$(this).find(".p-ana").val()}, ${$(this).find(".p-yan").val()}, ${$(this).find(".p-ek").val()}\n`;
+        });
 
         const telefon = "905077476114";
-        window.location.href = "https://wa.me/" + telefon + "?text=" + encodeURIComponent(mesaj);
+        window.location.href = "https://wa.me/" + telefon + "?text=" + encodeURIComponent(orderSummary);
     }
+
+    // Sayfa açıldığında ilk formu oluştur
+    $(document).ready(() => generateForms());
 </script>
 
 </body>
