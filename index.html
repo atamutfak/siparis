@@ -7,29 +7,26 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
         :root {
-            --p-color: #0d7a3a;
-            --accent-color: #d35400;
-            --bg-color: #f4f7f6;
-            --card-color: #ffffff;
-            --border-color: #e5e7eb;
+            --green: #0d7a3a;
+            --accent: #d35400;
+            --bg: #f4f7f6;
+            --border: #e5e7eb;
             --muted: #666;
-            --btn-color: #25D366;
+            --btn: #25D366;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', sans-serif;
-            background: var(--bg-color);
+            background: var(--bg);
             padding: 15px;
             margin: 0;
             color: #222;
         }
 
         .container {
-            max-width: 760px;
+            max-width: 820px;
             background: #fff;
             padding: 24px;
             border-radius: 20px;
@@ -49,7 +46,6 @@
             margin: 0;
             font-size: 34px;
             font-weight: 800;
-            letter-spacing: 0.4px;
         }
 
         .header p {
@@ -92,12 +88,13 @@
 
         #loading {
             text-align: center;
-            color: var(--accent-color);
+            color: var(--accent);
             padding: 40px;
             font-weight: bold;
         }
 
-        .person-card {
+        .person-card,
+        .extra-row {
             border: 1px solid #eee;
             padding: 16px;
             border-radius: 16px;
@@ -105,73 +102,26 @@
             background: #fafafa;
         }
 
-        .person-title {
-            color: var(--accent-color);
+        .person-title,
+        .extra-title {
+            color: var(--accent);
             font-weight: 800;
             margin-bottom: 10px;
             font-size: 16px;
         }
 
-        .menu-grid {
+        .menu-grid,
+        .extra-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
         }
 
-        .extra-products {
+        .extra-grid-3 {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 14px;
-            margin-top: 12px;
-        }
-
-        .extra-card {
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 14px;
-            background: #fafafa;
-            display: grid;
-            grid-template-columns: 90px 1fr;
-            gap: 14px;
-            align-items: center;
-        }
-
-        .extra-image {
-            width: 90px;
-            height: 90px;
-            border-radius: 12px;
-            border: 1px dashed #cfcfcf;
-            background: #f1f1f1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #999;
-            font-size: 12px;
-            text-align: center;
-            padding: 6px;
-        }
-
-        .extra-info h4 {
-            margin: 0 0 6px;
-            font-size: 16px;
-            color: #111;
-        }
-
-        .extra-info p {
-            margin: 0 0 10px;
-            color: var(--muted);
-            font-size: 13px;
-        }
-
-        .qty-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .qty-row input {
-            max-width: 100px;
+            grid-template-columns: 1.2fr 1.5fr 0.7fr;
+            gap: 12px;
+            align-items: end;
         }
 
         .summary-box {
@@ -189,9 +139,16 @@
         }
 
         .summary-line {
-            margin: 6px 0;
+            margin: 7px 0;
             font-size: 14px;
             color: #333;
+            line-height: 1.5;
+        }
+
+        .summary-subtitle {
+            margin-top: 10px;
+            font-weight: 700;
+            color: #111;
         }
 
         .kvkk {
@@ -210,7 +167,7 @@
 
         .btn {
             width: 100%;
-            background: var(--btn-color);
+            background: var(--btn);
             color: #fff;
             border: none;
             padding: 18px;
@@ -221,10 +178,35 @@
             margin-top: 18px;
         }
 
+        .btn-secondary {
+            width: auto;
+            background: #111;
+            color: #fff;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .btn-remove {
+            background: #c0392b;
+            color: #fff;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 13px;
+            width: 100%;
+        }
+
         .price-badge {
             display: inline-block;
             background: #e8fff1;
-            color: #0d7a3a;
+            color: var(--green);
             padding: 5px 10px;
             border-radius: 999px;
             font-size: 13px;
@@ -240,21 +222,11 @@
         }
 
         @media (max-width: 640px) {
-            .container {
-                padding: 18px;
-            }
-
-            .menu-grid {
+            .container { padding: 18px; }
+            .menu-grid,
+            .extra-grid,
+            .extra-grid-3 {
                 grid-template-columns: 1fr;
-            }
-
-            .extra-card {
-                grid-template-columns: 1fr;
-            }
-
-            .extra-image {
-                width: 100%;
-                height: 120px;
             }
         }
     </style>
@@ -290,17 +262,32 @@
 
         <div class="section-title">Ekstra Tekli Ürünler</div>
         <div class="note-box">
-            Tabldot siparişe ek olarak istenirse aşağıdaki ürünlerden adet girilerek ekstra sipariş verilebilir.
+            Tabldot siparişe ek olarak istenirse kategori, ürün ve adet seçilerek ekstra sipariş verilebilir.
         </div>
 
-        <div id="extraProducts" class="extra-products"></div>
+        <div id="extraRows"></div>
+        <button type="button" class="btn-secondary" onclick="addExtraRow()">+ Ekstra Ürün Ekle</button>
 
         <div class="summary-box">
             <h3>Genel Sipariş Özeti</h3>
-            <div class="summary-line" id="summaryTabldot">Tabldot Tutarı: 0 TL</div>
-            <div class="summary-line" id="summaryExtra">Ekstra Ürün Tutarı: 0 TL</div>
-            <div class="summary-line" id="summaryTotal">Toplam Tutar: 0 TL</div>
-            <div class="summary-line" id="summaryItems">Ürün Özeti: -</div>
+            <div class="summary-line" id="summaryTabldotPrice">Tabldot Tutarı: 0 TL</div>
+            <div class="summary-line" id="summaryExtraPrice">Ekstra Ürün Tutarı: 0 TL</div>
+            <div class="summary-line" id="summaryTotalPrice"><strong>Toplam Tutar: 0 TL</strong></div>
+
+            <div class="summary-subtitle">Çorbalar</div>
+            <div class="summary-line" id="summarySoups">-</div>
+
+            <div class="summary-subtitle">Ana Yemekler</div>
+            <div class="summary-line" id="summaryMains">-</div>
+
+            <div class="summary-subtitle">Yan Lezzetler</div>
+            <div class="summary-line" id="summarySides">-</div>
+
+            <div class="summary-subtitle">İçecekler</div>
+            <div class="summary-line" id="summaryDrinks">-</div>
+
+            <div class="summary-subtitle">Ekstra Ürünler</div>
+            <div class="summary-line" id="summaryExtras">-</div>
         </div>
 
         <label class="kvkk">
@@ -321,16 +308,61 @@
 
     let menu = { corba: [], ana: [], yan: [], ek: [] };
 
-    const extraProducts = [
-        { name: "Çorbalar", price: 70, desc: "Ekstra tekli sipariş" },
-        { name: "Tavuk Yemekleri", price: 120, desc: "Ekstra tekli sipariş" },
-        { name: "Sebze Yemekleri", price: 100, desc: "Ekstra tekli sipariş" },
-        { name: "Et Yemekleri", price: 150, desc: "Ekstra tekli sipariş" },
-        { name: "Sade Pirinç / Bulgur / Makarna", price: 80, desc: "Ekstra tekli sipariş" },
-        { name: "Cacık / Salata / Komposto", price: 40, desc: "Ekstra tekli sipariş" },
-        { name: "Ayran / Meyve Suyu vb.", price: 20, desc: "Ekstra tekli sipariş" },
-        { name: "Tatlı", price: 50, desc: "Ekstra tekli sipariş" }
-    ];
+    // Buradaki listeleri kendi güncel ürünlerinle istediğin zaman değiştirebilirsin
+    const EXTRA_PRODUCT_OPTIONS = {
+        "Çorbalar": [],
+        "Tavuk Yemekleri": [
+            "Tavuk Sote",
+            "Tavuk Kavurma",
+            "Tavuk Haşlama",
+            "Tavuk Izgara"
+        ],
+        "Sebze Yemekleri": [
+            "Türlü",
+            "Taze Fasulye",
+            "Karnıbahar",
+            "Ispanak",
+            "Pırasa",
+            "Bezelye"
+        ],
+        "Et Yemekleri": [
+            "Tas Kebap",
+            "Et Sote",
+            "Kuru Fasulye",
+            "Nohut",
+            "İzmir Köfte"
+        ],
+        "Sade Pirinç / Bulgur / Makarna": [
+            "Pirinç Pilavı",
+            "Bulgur Pilavı",
+            "Makarna"
+        ],
+        "Cacık / Salata / Komposto": [
+            "Cacık",
+            "Salata",
+            "Komposto"
+        ],
+        "Ayran / Meyve Suyu vb.": [
+            "Ayran",
+            "Meyve Suyu"
+        ],
+        "Tatlı": [
+            "Sütlaç",
+            "Revani",
+            "Kemalpaşa"
+        ]
+    };
+
+    const EXTRA_CATEGORY_PRICES = {
+        "Çorbalar": 70,
+        "Tavuk Yemekleri": 120,
+        "Sebze Yemekleri": 100,
+        "Et Yemekleri": 150,
+        "Sade Pirinç / Bulgur / Makarna": 80,
+        "Cacık / Salata / Komposto": 40,
+        "Ayran / Meyve Suyu vb.": 20,
+        "Tatlı": 50
+    };
 
     async function getMenu() {
         try {
@@ -355,12 +387,15 @@
             menu.yan   = [...new Set(menu.yan)];
             menu.ek    = [...new Set(menu.ek)];
 
+            // Çorba listesini ekstra ürün seçeneklerine sheet'ten bağla
+            EXTRA_PRODUCT_OPTIONS["Çorbalar"] = [...menu.corba];
+
             if (menu.corba.length > 0 || menu.ana.length > 0 || menu.yan.length > 0 || menu.ek.length > 0) {
                 initPersonCount();
-                renderExtraProducts();
                 $("#loading").hide();
                 $("#mainForm").show();
                 generateForms();
+                addExtraRow();
                 updateSummary();
             } else {
                 $("#loading").html("<span style='color:red;'>Veri bulunamadı. Tabloyu kontrol edin.</span>");
@@ -373,7 +408,6 @@
     function initPersonCount() {
         const select = $("#personCount");
         select.empty();
-
         for (let i = 1; i <= 15; i++) {
             select.append(`<option value="${i}">${i} Kişilik</option>`);
         }
@@ -419,36 +453,68 @@
         }
     }
 
-    function renderExtraProducts() {
-        const container = $("#extraProducts");
-        container.empty();
+    function getCategoryOptionsHtml() {
+        return Object.keys(EXTRA_CATEGORY_PRICES).map(cat => `<option value="${cat}">${cat}</option>`).join('');
+    }
 
-        extraProducts.forEach((product, index) => {
-            container.append(`
-                <div class="extra-card">
-                    <div class="extra-image">Görsel<br>Bekleniyor</div>
-                    <div class="extra-info">
-                        <h4>${product.name}</h4>
-                        <p>${product.desc}</p>
-                        <div class="qty-row">
-                            <span><strong>${product.price} TL</strong></span>
-                            <input 
-                                type="number" 
-                                min="0" 
-                                value="0" 
-                                class="extra-qty" 
-                                data-index="${index}" 
-                                onchange="updateSummary()"
-                            >
-                        </div>
+    function getProductOptions(category) {
+        return EXTRA_PRODUCT_OPTIONS[category] || [];
+    }
+
+    function getProductOptionsHtml(category) {
+        const options = getProductOptions(category);
+        if (!options.length) return `<option value="">Ürün bulunamadı</option>`;
+        return options.map(item => `<option value="${item}">${item}</option>`).join('');
+    }
+
+    function addExtraRow() {
+        const rowId = `extraRow_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+        const defaultCategory = Object.keys(EXTRA_CATEGORY_PRICES)[0];
+
+        $("#extraRows").append(`
+            <div class="extra-row" id="${rowId}">
+                <div class="extra-title">Ekstra Ürün</div>
+                <div class="extra-grid-3">
+                    <div>
+                        <label>Kategori</label>
+                        <select class="extra-category" onchange="handleExtraCategoryChange('${rowId}'); updateSummary();">
+                            ${getCategoryOptionsHtml()}
+                        </select>
+                    </div>
+                    <div>
+                        <label>Ürün</label>
+                        <select class="extra-product" onchange="updateSummary()">
+                            ${getProductOptionsHtml(defaultCategory)}
+                        </select>
+                    </div>
+                    <div>
+                        <label>Adet</label>
+                        <input type="number" min="1" value="1" class="extra-qty" onchange="updateSummary()">
                     </div>
                 </div>
-            `);
-        });
+                <button type="button" class="btn-remove" onclick="removeExtraRow('${rowId}')">Satırı Sil</button>
+            </div>
+        `);
+
+        updateSummary();
+    }
+
+    function removeExtraRow(rowId) {
+        $(`#${rowId}`).remove();
+        updateSummary();
+    }
+
+    function handleExtraCategoryChange(rowId) {
+        const row = $(`#${rowId}`);
+        const category = row.find(".extra-category").val();
+        row.find(".extra-product").html(getProductOptionsHtml(category));
     }
 
     function getTabldotSummary() {
-        const countMap = {};
+        const soups = {};
+        const mains = {};
+        const sides = {};
+        const drinks = {};
         const details = [];
         const personCount = parseInt($("#personCount").val(), 10);
         const totalPrice = personCount * TABLDOT_PRICE_PER_PERSON;
@@ -461,48 +527,38 @@
 
             details.push(`${i + 1}. Kişi: ${corba}, ${ana}, ${yan}, ${ek}`);
 
-            [corba, ana, yan, ek].forEach(item => {
-                if (item) {
-                    countMap[item] = (countMap[item] || 0) + 1;
-                }
-            });
+            if (corba) soups[corba] = (soups[corba] || 0) + 1;
+            if (ana) mains[ana] = (mains[ana] || 0) + 1;
+            if (yan) sides[yan] = (sides[yan] || 0) + 1;
+            if (ek) drinks[ek] = (drinks[ek] || 0) + 1;
         });
 
-        return { totalPrice, countMap, details, personCount };
+        return { totalPrice, soups, mains, sides, drinks, details, personCount };
     }
 
     function getExtraSummary() {
-        const countMap = {};
+        const extras = {};
         const details = [];
         let totalPrice = 0;
 
-        $(".extra-qty").each(function() {
-            const index = parseInt($(this).data("index"), 10);
-            const qty = parseInt($(this).val(), 10) || 0;
-            const product = extraProducts[index];
+        $(".extra-row").each(function() {
+            const category = $(this).find(".extra-category").val();
+            const product = $(this).find(".extra-product").val();
+            const qty = parseInt($(this).find(".extra-qty").val(), 10) || 0;
+            const unitPrice = EXTRA_CATEGORY_PRICES[category] || 0;
 
-            if (qty > 0) {
-                totalPrice += qty * product.price;
-                countMap[product.name] = qty;
-                details.push(`${product.name}: ${qty} adet`);
+            if (product && qty > 0) {
+                totalPrice += qty * unitPrice;
+                extras[product] = (extras[product] || 0) + qty;
+                details.push(`${category} - ${product}: ${qty} adet`);
             }
         });
 
-        return { totalPrice, countMap, details };
+        return { totalPrice, extras, details };
     }
 
-    function mergeCountMaps(map1, map2) {
-        const result = { ...map1 };
-
-        Object.keys(map2).forEach(key => {
-            result[key] = (result[key] || 0) + map2[key];
-        });
-
-        return result;
-    }
-
-    function formatCountMap(countMap) {
-        const entries = Object.entries(countMap);
+    function formatMap(map) {
+        const entries = Object.entries(map);
         if (!entries.length) return "-";
         return entries.map(([name, qty]) => `${name}: ${qty}`).join(" | ");
     }
@@ -511,12 +567,16 @@
         const tabldotSummary = getTabldotSummary();
         const extraSummary = getExtraSummary();
         const totalPrice = tabldotSummary.totalPrice + extraSummary.totalPrice;
-        const combinedCounts = mergeCountMaps(tabldotSummary.countMap, extraSummary.countMap);
 
-        $("#summaryTabldot").text(`Tabldot Tutarı: ${tabldotSummary.totalPrice} TL`);
-        $("#summaryExtra").text(`Ekstra Ürün Tutarı: ${extraSummary.totalPrice} TL`);
-        $("#summaryTotal").text(`Toplam Tutar: ${totalPrice} TL`);
-        $("#summaryItems").text(`Ürün Özeti: ${formatCountMap(combinedCounts)}`);
+        $("#summaryTabldotPrice").text(`Tabldot Tutarı: ${tabldotSummary.totalPrice} TL`);
+        $("#summaryExtraPrice").text(`Ekstra Ürün Tutarı: ${extraSummary.totalPrice} TL`);
+        $("#summaryTotalPrice").html(`<strong>Toplam Tutar: ${totalPrice} TL</strong>`);
+
+        $("#summarySoups").text(formatMap(tabldotSummary.soups));
+        $("#summaryMains").text(formatMap(tabldotSummary.mains));
+        $("#summarySides").text(formatMap(tabldotSummary.sides));
+        $("#summaryDrinks").text(formatMap(tabldotSummary.drinks));
+        $("#summaryExtras").text(formatMap(extraSummary.extras));
     }
 
     function sendOrder() {
@@ -536,31 +596,33 @@
 
         const now = new Date();
         const dateText = now.toLocaleDateString("tr-TR");
-        const timeText = now.toLocaleTimeString("tr-TR", {
-            hour: "2-digit",
-            minute: "2-digit"
-        });
+        const timeText = now.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
 
         const tabldotSummary = getTabldotSummary();
         const extraSummary = getExtraSummary();
         const totalPrice = tabldotSummary.totalPrice + extraSummary.totalPrice;
-        const combinedCounts = mergeCountMaps(tabldotSummary.countMap, extraSummary.countMap);
 
         let msg = `${name}\n${addr}\n\n`;
         msg += `Tarih: ${dateText}\n`;
         msg += `Saat: ${timeText}\n`;
         msg += `Tabldot Tutarı: ${tabldotSummary.totalPrice} TL\n`;
         msg += `Ekstra Ürün Tutarı: ${extraSummary.totalPrice} TL\n`;
-        msg += `Toplam Tutar: ${totalPrice} TL\n`;
-        msg += `Genel Ürün Özeti: ${formatCountMap(combinedCounts)}\n\n`;
+        msg += `Toplam Tutar: ${totalPrice} TL\n\n`;
 
-        msg += `TABLDOT SİPARİŞ\n`;
+        msg += `ÖZET\n`;
+        msg += `Çorbalar: ${formatMap(tabldotSummary.soups)}\n`;
+        msg += `Ana Yemekler: ${formatMap(tabldotSummary.mains)}\n`;
+        msg += `Yan Lezzetler: ${formatMap(tabldotSummary.sides)}\n`;
+        msg += `İçecekler: ${formatMap(tabldotSummary.drinks)}\n`;
+        msg += `Ekstra Ürünler: ${formatMap(extraSummary.extras)}\n\n`;
+
+        msg += `TABLDOT DETAYI\n`;
         tabldotSummary.details.forEach(line => {
             msg += `${line}\n`;
         });
 
         if (extraSummary.details.length > 0) {
-            msg += `\nEKSTRA TEKLİ ÜRÜNLER\n`;
+            msg += `\nEKSTRA ÜRÜNLER DETAYI\n`;
             extraSummary.details.forEach(line => {
                 msg += `${line}\n`;
             });
