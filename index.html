@@ -149,6 +149,17 @@
             color: #111;
         }
 
+        .info-box {
+            margin-top: 16px;
+            background: #f5f8ff;
+            border: 1px solid #d8e3ff;
+            border-radius: 14px;
+            padding: 14px;
+            font-size: 13px;
+            color: #344054;
+            line-height: 1.6;
+        }
+
         .kvkk {
             font-size: 12px;
             color: #666;
@@ -243,10 +254,10 @@
         <div class="section-title">Müşteri Bilgileri</div>
 
         <label>Ad Soyad *</label>
-        <input type="text" id="custName" required>
+        <input type="text" id="custName" required oninput="updateSummary()">
 
         <label>Teslimat Adresi *</label>
-        <textarea id="custAddress" rows="2" required></textarea>
+        <textarea id="custAddress" rows="2" required oninput="updateSummary()"></textarea>
 
         <div class="section-title">
             Tabldot Sipariş
@@ -288,6 +299,23 @@
             <div class="summary-line" id="summaryExtras">-</div>
         </div>
 
+        <div class="section-title">Ek Bilgiler</div>
+
+        <label>Not (Opsiyonel)</label>
+        <textarea id="orderNote" rows="3" placeholder="İsterseniz siparişinize ilişkin kısa bir not ekleyebilirsiniz."></textarea>
+
+        <label>Ödeme Yöntemi *</label>
+        <select id="paymentMethod">
+            <option value="">Seçiniz</option>
+            <option value="Kart">Kart</option>
+            <option value="Nakit">Nakit</option>
+            <option value="İkisi de">İkisi de</option>
+        </select>
+
+        <div class="info-box">
+            Siparişinizi tamamlamak için aşağıdaki butona tıkladığınızda WhatsApp uygulamanız açılacaktır. Açılan hazır mesajı göndermenizle birlikte siparişiniz tarafımıza iletilecektir.
+        </div>
+
         <label class="kvkk">
             <input type="checkbox" id="kvkkCheck">
             <span>Kişisel verilerimin sipariş sürecinde kullanılmasını kabul ediyorum.</span>
@@ -299,9 +327,7 @@
 
 <script>
     const SHEET_ID = '1Tym9AWjTN-2WT4POrdRb2TWYcSZq1kTB2rPcUy_NF_o';
-
-    // BURAYI KONTROL ET
-    const GID_TABLDOT = '0'; 
+    const GID_TABLDOT = '0';
     const GID_EXTRA = '1399942607';
 
     const TABLDOT_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID_TABLDOT}`;
@@ -466,6 +492,8 @@
                 </div>
             `);
         }
+
+        updateSummary();
     }
 
     function getCategoryOptionsHtml() {
@@ -596,10 +624,17 @@
     function sendOrder() {
         const name = $("#custName").val().trim();
         const addr = $("#custAddress").val().trim();
+        const paymentMethod = $("#paymentMethod").val().trim();
+        const note = $("#orderNote").val().trim();
         const kvkk = $("#kvkkCheck").is(":checked");
 
         if (!name || !addr) {
             alert("Lütfen isim ve adres giriniz.");
+            return;
+        }
+
+        if (!paymentMethod) {
+            alert("Lütfen ödeme yöntemini seçiniz.");
             return;
         }
 
@@ -622,11 +657,16 @@
         let msg = `${name}\n${addr}\n\n`;
         msg += `Tarih: ${dateText}\n`;
         msg += `Saat: ${timeText}\n`;
+        msg += `Ödeme Yöntemi: ${paymentMethod}\n`;
         msg += `Tabldot Tutarı: ${tabldotSummary.totalPrice} TL\n`;
         msg += `Ekstra Ürün Tutarı: ${extraSummary.totalPrice} TL\n`;
-        msg += `Toplam Tutar: ${totalPrice} TL\n\n`;
+        msg += `Toplam Tutar: ${totalPrice} TL\n`;
 
-        msg += `ÖZET\n`;
+        if (note) {
+            msg += `Not: ${note}\n`;
+        }
+
+        msg += `\nÖZET\n`;
         msg += `Çorbalar: ${formatMap(tabldotSummary.soups)}\n`;
         msg += `Ana Yemekler: ${formatMap(tabldotSummary.mains)}\n`;
         msg += `Yan Lezzetler: ${formatMap(tabldotSummary.sides)}\n`;
