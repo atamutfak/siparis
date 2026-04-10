@@ -306,7 +306,7 @@
 
         <label>Ödeme Yöntemi *</label>
         <select id="paymentMethod">
-            <option value="">Seçiniz</option>
+            <option value="" selected>Seçiniz</option>
             <option value="Kart">Kart</option>
             <option value="Nakit">Nakit</option>
             <option value="İkisi de">İkisi de</option>
@@ -351,6 +351,10 @@
         return rows.map(row => row.split(/[;,]/).map(c => c.replace(/^"|"$/g, '').trim()));
     }
 
+    function buildSelectOptions(items) {
+        return `<option value="" selected>Seçiniz</option>` + items.map(x => `<option value="${x}">${x}</option>`).join('');
+    }
+
     async function getMenus() {
         try {
             const [tabldotResp, extraResp] = await Promise.all([
@@ -385,7 +389,6 @@
             $("#loading").hide();
             $("#mainForm").show();
             generateForms();
-            addExtraRow();
             updateSummary();
 
         } catch (err) {
@@ -448,6 +451,7 @@
     function initPersonCount() {
         const select = $("#personCount");
         select.empty();
+        select.append(`<option value="" selected>Seçiniz</option>`);
 
         for (let i = 1; i <= 15; i++) {
             select.append(`<option value="${i}">${i} Kişilik</option>`);
@@ -459,6 +463,11 @@
         const container = $("#dynamicPersons");
         container.empty();
 
+        if (!count) {
+            updateSummary();
+            return;
+        }
+
         for (let i = 1; i <= count; i++) {
             container.append(`
                 <div class="person-card">
@@ -467,25 +476,25 @@
                         <div>
                             <label>Çorba</label>
                             <select class="p-corba" onchange="updateSummary()">
-                                ${menu.corba.map(x => `<option>${x}</option>`).join('')}
+                                ${buildSelectOptions(menu.corba)}
                             </select>
                         </div>
                         <div>
                             <label>Ana Yemek</label>
                             <select class="p-ana" onchange="updateSummary()">
-                                ${menu.ana.map(x => `<option>${x}</option>`).join('')}
+                                ${buildSelectOptions(menu.ana)}
                             </select>
                         </div>
                         <div>
                             <label>Yan Lezzet</label>
                             <select class="p-yan" onchange="updateSummary()">
-                                ${menu.yan.map(x => `<option>${x}</option>`).join('')}
+                                ${buildSelectOptions(menu.yan)}
                             </select>
                         </div>
                         <div>
                             <label>İçecek</label>
                             <select class="p-ek" onchange="updateSummary()">
-                                ${menu.ek.map(x => `<option>${x}</option>`).join('')}
+                                ${buildSelectOptions(menu.ek)}
                             </select>
                         </div>
                     </div>
@@ -497,13 +506,14 @@
     }
 
     function getCategoryOptionsHtml() {
-        return Object.keys(extraData).map(cat => `<option value="${cat}">${cat}</option>`).join('');
+        return `<option value="" selected>Seçiniz</option>` + Object.keys(extraData).map(cat => `<option value="${cat}">${cat}</option>`).join('');
     }
 
     function getProductOptionsHtml(category) {
+        if (!category) return `<option value="" selected>Önce kategori seçiniz</option>`;
         const options = extraData[category] || [];
-        if (!options.length) return `<option value="">Ürün bulunamadı</option>`;
-        return options.map(item => `<option value="${item}">${item}</option>`).join('');
+        if (!options.length) return `<option value="" selected>Ürün bulunamadı</option>`;
+        return `<option value="" selected>Seçiniz</option>` + options.map(item => `<option value="${item}">${item}</option>`).join('');
     }
 
     function addExtraRow() {
@@ -511,7 +521,6 @@
         if (!categories.length) return;
 
         const rowId = `extraRow_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
-        const defaultCategory = categories[0];
 
         $("#extraRows").append(`
             <div class="extra-row" id="${rowId}">
@@ -526,12 +535,12 @@
                     <div>
                         <label>Ürün</label>
                         <select class="extra-product" onchange="updateSummary()">
-                            ${getProductOptionsHtml(defaultCategory)}
+                            <option value="" selected>Önce kategori seçiniz</option>
                         </select>
                     </div>
                     <div>
                         <label>Adet</label>
-                        <input type="number" min="1" value="1" class="extra-qty" onchange="updateSummary()">
+                        <input type="number" min="1" value="" placeholder="Adet" class="extra-qty" onchange="updateSummary()">
                     </div>
                 </div>
                 <button type="button" class="btn-remove" onclick="removeExtraRow('${rowId}')">Satırı Sil</button>
@@ -550,6 +559,7 @@
         const row = $(`#${rowId}`);
         const category = row.find(".extra-category").val();
         row.find(".extra-product").html(getProductOptionsHtml(category));
+        row.find(".extra-qty").val('');
     }
 
     function getTabldotSummary() {
@@ -558,7 +568,7 @@
         const sides = {};
         const drinks = {};
         const details = [];
-        const personCount = parseInt($("#personCount").val(), 10);
+        const personCount = parseInt($("#personCount").val(), 10) || 0;
         const totalPrice = personCount * TABLDOT_PRICE_PER_PERSON;
 
         $(".person-card").each(function(i) {
@@ -567,7 +577,9 @@
             const yan = $(this).find(".p-yan").val();
             const ek = $(this).find(".p-ek").val();
 
-            details.push(`${i + 1}. Kişi: ${corba}, ${ana}, ${yan}, ${ek}`);
+            if (corba && ana && yan && ek) {
+                details.push(`${i + 1}. Kişi: ${corba}, ${ana}, ${yan}, ${ek}`);
+            }
 
             if (corba) soups[corba] = (soups[corba] || 0) + 1;
             if (ana) mains[ana] = (mains[ana] || 0) + 1;
@@ -589,7 +601,7 @@
             const qty = parseInt($(this).find(".extra-qty").val(), 10) || 0;
             const unitPrice = extraPrices[category] || 0;
 
-            if (product && qty > 0) {
+            if (category && product && qty > 0) {
                 totalPrice += qty * unitPrice;
                 extras[product] = (extras[product] || 0) + qty;
                 details.push(`${category} - ${product}: ${qty} adet`);
@@ -603,6 +615,53 @@
         const entries = Object.entries(map);
         if (!entries.length) return "-";
         return entries.map(([name, qty]) => `${name}: ${qty}`).join(" | ");
+    }
+
+    function validateSelections() {
+        const personCount = $("#personCount").val();
+        if (!personCount) {
+            alert("Lütfen kişi sayısını seçiniz.");
+            return false;
+        }
+
+        let invalidTabldot = false;
+        $(".person-card").each(function() {
+            const corba = $(this).find(".p-corba").val();
+            const ana = $(this).find(".p-ana").val();
+            const yan = $(this).find(".p-yan").val();
+            const ek = $(this).find(".p-ek").val();
+
+            if (!corba || !ana || !yan || !ek) {
+                invalidTabldot = true;
+            }
+        });
+
+        if (invalidTabldot) {
+            alert("Lütfen tabldot alanlarında tüm seçimleri tamamlayınız.");
+            return false;
+        }
+
+        let invalidExtra = false;
+        $(".extra-row").each(function() {
+            const category = $(this).find(".extra-category").val();
+            const product = $(this).find(".extra-product").val();
+            const qtyRaw = $(this).find(".extra-qty").val();
+
+            const anyFilled = category || product || qtyRaw;
+            if (anyFilled) {
+                const qty = parseInt(qtyRaw, 10) || 0;
+                if (!category || !product || qty <= 0) {
+                    invalidExtra = true;
+                }
+            }
+        });
+
+        if (invalidExtra) {
+            alert("Ekstra ürün satırlarında kategori, ürün ve adet alanlarını eksiksiz doldurunuz veya satırı siliniz.");
+            return false;
+        }
+
+        return true;
     }
 
     function updateSummary() {
@@ -633,6 +692,10 @@
             return;
         }
 
+        if (!validateSelections()) {
+            return;
+        }
+
         if (!paymentMethod) {
             alert("Lütfen ödeme yöntemini seçiniz.");
             return;
@@ -652,15 +715,11 @@
 
         const tabldotSummary = getTabldotSummary();
         const extraSummary = getExtraSummary();
-        const totalPrice = tabldotSummary.totalPrice + extraSummary.totalPrice;
 
         let msg = `${name}\n${addr}\n\n`;
         msg += `Tarih: ${dateText}\n`;
         msg += `Saat: ${timeText}\n`;
         msg += `Ödeme Yöntemi: ${paymentMethod}\n`;
-        msg += `Tabldot Tutarı: ${tabldotSummary.totalPrice} TL\n`;
-        msg += `Ekstra Ürün Tutarı: ${extraSummary.totalPrice} TL\n`;
-        msg += `Toplam Tutar: ${totalPrice} TL\n`;
 
         if (note) {
             msg += `Not: ${note}\n`;
